@@ -10,6 +10,8 @@ import UIKit
 
 class PokemonDetailVC: UIViewController {
     
+    @IBOutlet weak var bgImg: UIImageView!
+    
     @IBOutlet weak var nameLbl: UILabel!
     @IBOutlet weak var mainImg: UIImageView!
     @IBOutlet weak var descriptLbl: UILabel!
@@ -32,8 +34,54 @@ class PokemonDetailVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        nameLbl.text = pokemon.name
+        nameLbl.text = pokemon.name.uppercaseString
+        let img = UIImage(named: "\(pokemon.pokedexId)")
+        mainImg.image = img
+        firstEvoImg.image = img
+        
+        pokemon.downloadPokemonDetails { () -> () in
+            //this will be called after download is done
+            print("We Got Here")
+            
+            self.updateUI()
+            
+        }
 
+    }
+    
+    func updateUI() {
+        descriptLbl.text = pokemon.description
+        
+        
+        typeLbl.text = pokemon.type
+        defenseLbl.text = pokemon.defense
+        heightLbl.text = pokemon.height
+        weightLbl.text = pokemon.weight
+        baseLbl.text = pokemon.attack
+        pokeIDLbl.text = "\(pokemon.pokedexId)"
+        
+
+        if pokemon.nextEvoLvl == "" {
+            evoLbl.text = "No Evolution"
+            secEvoImg.hidden = true
+        } else {
+            secEvoImg.hidden = false
+            secEvoImg.image = UIImage(named: pokemon.EvolutionID)
+            
+            var str = "Next Evolution: \(pokemon.nextEvoText)"
+            if pokemon.nextEvoLvl != "" {
+                str += " Level \(pokemon.nextEvoLvl)"
+            }
+            evoLbl.text = str
+        }
+        if (pokemon.type.rangeOfString("/") == nil) {
+            if let img = UIImage(named: pokemon.type){
+                bgImg.image = img
+            }
+            else {
+                bgImg.image = UIImage(named: "bg")
+            }
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -41,15 +89,10 @@ class PokemonDetailVC: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    
+    @IBAction func backBtnPressed(sender: AnyObject) {
+        dismissViewControllerAnimated(true, completion: nil)
     }
-    */
+
 
 }
