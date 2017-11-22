@@ -1,1 +1,3 @@
-My Pokedex Project.
+My Pokedex Project
+
+Swift project
